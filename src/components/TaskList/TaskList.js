@@ -1,33 +1,43 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import Task from '../Task';
 
 import './TaskList.css';
 
-const TaskList = ({ tasks }) => {
+export default class TaskList extends Component {
+  render() {
+    let { tasks, onDeleted, onCompleted } = this.props;
 
-  let elements = tasks.map((item) => {
-    let {id, completed, editing = false, ...task} = item;
-    let className = completed ? 'completed' : '';
-    className = editing ? 'editing' : '';
+    let elements = tasks.map((item) => {
+      let {id, editing = false, ...task} = item;
 
-    let editInput = editing
-      ? (<input type="text" className="edit" defaultValue={task.description} />)
-      : null;
+      let classNames = '';
+      if(task.completed) {
+        classNames = 'completed' 
+      }
 
+      if(editing) {
+        classNames = 'editing';
+      }
+  
+      let editInput = editing
+        ? (<input type="text" className="edit" defaultValue={task.description} />)
+        : null;
+  
+      return (
+        <li className={classNames} key={id} >
+          <Task {...task}
+            onDeleteClick={ () => onDeleted(id) }
+            onCompleteClick={ () => onCompleted(id) } />
+          {editInput}
+        </li>
+      );
+    })
+  
     return (
-      <li className={className} key={id} >
-        <Task {...task} />
-        {editInput}
-      </li>
+      <ul className="todo-list">
+        {elements}
+      </ul>
     );
-  })
-
-  return (
-    <ul className="todo-list">
-      {elements}
-    </ul>
-  );
-};
-
-export default TaskList;
+  }
+}
