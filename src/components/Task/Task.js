@@ -1,7 +1,7 @@
 import React from 'react';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
-const Task = ({ description, created, completed, onCompleteClick, onDeleteClick }) => {
+const Task = ({ description, created, completed, onCompleteClick, onDeleteClick, onEditingClick }) => {
   let createdText = created && formatDistanceToNow(created, { addSuffix: true });
   
   return (
@@ -13,9 +13,10 @@ const Task = ({ description, created, completed, onCompleteClick, onDeleteClick 
         <span className="description">{ description }</span>
         <span className="created">{ createdText }</span>
       </label>
-      <button className="icon icon-edit"></button>
+      <button className="icon icon-edit"
+        onClick={ onEditingClick } ></button>
       <button className="icon icon-destroy"
-        onClick={onDeleteClick} ></button>
+        onClick={ onDeleteClick } ></button>
     </div>
   );
 };

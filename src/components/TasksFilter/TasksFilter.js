@@ -2,19 +2,26 @@ import React from 'react';
 
 import './TasksFilter.css'
 
-const TasksFilter = (props) => {
-  
+const TasksFilter = ({ values, onSelectedFilter, filterDefault }) => {
+  let elements = values.map(({ id, value }) => {
+    let classNames = '';
+    if(filterDefault === value) {
+      classNames = 'selected';
+    }
+    
+    return (
+      <li key={ id } >
+        <button 
+          className={classNames}
+          onClick={ () => onSelectedFilter(value) } >{ value }</button>
+      </li>
+    );
+  });
+
+
   return (
     <ul className="filters">
-      <li>
-        <button className="selected">All</button>
-      </li>
-      <li>
-        <button>Active</button>
-      </li>
-      <li>
-        <button>Completed</button>
-      </li>
+      {elements}
     </ul>
   );
 };
