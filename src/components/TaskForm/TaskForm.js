@@ -1,24 +1,37 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import './NewTaskForm.css';
+import './TaskForm.css';
 
-export default class NewTaskForm extends Component {
+export default class TaskForm extends Component {
+  static defaultProps = {
+    defaultValue: '',
+    className: '',
+    onSubmit: () => null
+  }
+
+  static propTypes = {
+    defaultValue: PropTypes.string,
+    className: PropTypes.oneOf(['new-todo', 'edit']),
+    onSubmit: PropTypes.func
+  }
+
   constructor(props) {
     super(props);
 
-    let { defaultValue = '' } = props;
+    let { defaultValue } = props;
     this.state = {
       text: defaultValue
     };
   }
 
-  onChangeText = (e) => {
+  handleTextChange = (e) => {
     this.setState({
       text: e.target.value
     })
   }
 
-  onSubmit = (e) => {
+  handleFormSubmit = (e) => {
     e.preventDefault();
 
     let { text } = this.state;
@@ -32,14 +45,14 @@ export default class NewTaskForm extends Component {
 
   render() {
     let { text } = this.state;
-    let { className = 'new-todo' } = this.props;
+    let { className } = this.props;
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this.handleFormSubmit}>
         <input className={ className } 
           placeholder="What needs to be done?" 
           autoFocus
-          onChange={this.onChangeText}
+          onChange={this.handleTextChange}
           value={text} />
       </form>
     );

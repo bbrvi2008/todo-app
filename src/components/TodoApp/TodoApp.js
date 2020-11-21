@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Footer from '../Footer';
 import TaskList from '../TaskList';
-import NewTaskForm from '../NewTaskForm';
+import { NewTaskForm } from '../TaskForm';
 
 import './TodoApp.css'
 
@@ -15,12 +15,12 @@ export default class TodoApp extends Component {
       this.createTask('Editing task'),
       this.createTask('Active task')
     ],
-    tasksFilter: [
+    tasksFilterValues: [
       { id: 1, value: 'All' }, 
       { id: 2, value: 'Active' }, 
       { id: 3, value: 'Completed' }
     ],
-    selectedFilter: 'All'
+    filterValue: 'All'
   };
 
   createTask(text, completed = false) {
@@ -84,23 +84,7 @@ export default class TodoApp extends Component {
     }
   }
 
-  completedItem = (id) => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: this.toggleItemProperty(tasksData, id, 'completed')
-      };
-    });
-  }
-
-  editingItem = (id) => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: this.toggleItemProperty(tasksData, id, 'editing')
-      };
-    });
-  }
-
-  createdItem = (text) => {
+  handleNewFormSubmit = (text) => {
     this.setState(({ tasksData }) => {
       let newItem = this.createTask(text);
 
@@ -110,7 +94,7 @@ export default class TodoApp extends Component {
     });
   }
 
-  editedItem = (oldItem, text) => {
+  handleEditFormSubmit = (oldItem, text) => {
     this.setState(({ tasksData }) => {
       let newItem = {
         ...oldItem,
@@ -124,7 +108,23 @@ export default class TodoApp extends Component {
     });
   }
 
-  deletedItem = (id) => {
+  handleCompleteClick = (id) => {
+    this.setState(({ tasksData }) => {
+      return {
+        tasksData: this.toggleItemProperty(tasksData, id, 'completed')
+      };
+    });
+  }
+
+  handleEditClick = (id) => {
+    this.setState(({ tasksData }) => {
+      return {
+        tasksData: this.toggleItemProperty(tasksData, id, 'editing')
+      };
+    });
+  }
+
+  handleDeleteClick = (id) => {
     this.setState(({ tasksData }) => {
       return {
         tasksData: this.deleteItem(tasksData, id)
@@ -132,13 +132,13 @@ export default class TodoApp extends Component {
     });
   }
 
-  selectedFilter = (value) => {
+  handleFilterChange = (value) => {
     this.setState({
-      selectedFilter: value
+      filterValue: value
     });
   }
 
-  clearCompleted = () => {
+  handleClearCompletedClick = () => {
     this.setState(({ tasksData }) => {
       return {
         tasksData: tasksData.filter(({ completed }) => !completed)
@@ -146,11 +146,10 @@ export default class TodoApp extends Component {
     })
   }
 
-
   render() {
-    let { tasksData, tasksFilter, selectedFilter } = this.state;
+    let { tasksData, tasksFilterValues, filterValue } = this.state;
 
-    let filteredTasksData = this.getTasksByFilter(tasksData, selectedFilter);
+    let filteredTasksData = this.getTasksByFilter(tasksData, filterValue);
     let countTasksActive = this.getTasksByFilter(tasksData, 'Active').length;
 
     return (
@@ -158,20 +157,20 @@ export default class TodoApp extends Component {
         <header className="header">
           <h1>todos</h1>
           <NewTaskForm 
-            onSubmit={ this.createdItem } />
+            onSubmit={ this.handleNewFormSubmit } />
         </header>
         <section className="main">
           <TaskList tasks={filteredTasksData} 
-            onDeleted={ this.deletedItem }
-            onCompleted={ this.completedItem }
-            onEditing={ this.editingItem }
-            onEdited={ this.editedItem } />
+            onDeleteClick={ this.handleDeleteClick }
+            onCompleteClick={ this.handleCompleteClick }
+            onEditClick={ this.handleEditClick }
+            onEditFormSubmit={ this.handleEditFormSubmit } />
           <Footer
             countTasksActive={ countTasksActive }
-            tasksFilter={ tasksFilter }
-            onSelectedFilter={ this.selectedFilter }
-            filterDefault={ selectedFilter }
-            onClearCompleted={ this.clearCompleted } />
+            tasksFilterValues={ tasksFilterValues }
+            filterValue={ filterValue }
+            onFilterChange={ this.handleFilterChange }
+            onClearCompletedClick={ this.handleClearCompletedClick } />
         </section>
       </section>
     );

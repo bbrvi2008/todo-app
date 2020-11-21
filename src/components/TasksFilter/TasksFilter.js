@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import './TasksFilter.css'
 
-const TasksFilter = ({ values, onSelectedFilter, filterDefault }) => {
+const TasksFilter = ({ values, defaultValue, onChange }) => {
   let elements = values.map(({ id, value }) => {
     let classNames = '';
-    if(filterDefault === value) {
+    if(defaultValue === value) {
       classNames = 'selected';
     }
     
@@ -13,17 +14,28 @@ const TasksFilter = ({ values, onSelectedFilter, filterDefault }) => {
       <li key={ id } >
         <button 
           className={classNames}
-          onClick={ () => onSelectedFilter(value) } >{ value }</button>
+          onClick={ () => onChange(value) } >{ value }</button>
       </li>
     );
   });
-
 
   return (
     <ul className="filters">
       {elements}
     </ul>
   );
+};
+
+TasksFilter.defaultProps = {
+  values: [],
+  defaultValue: '',
+  onChange: () => null
+};
+
+TasksFilter.propTypes = {
+  values: PropTypes.arrayOf(PropTypes.string),
+  defaultValue: PropTypes.string,
+  onChange: PropTypes.func
 };
 
 export default TasksFilter;

@@ -1,8 +1,9 @@
 import React from 'react';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import PropTypes from 'prop-types';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-const Task = ({ description, created, completed, onCompleteClick, onDeleteClick, onEditingClick }) => {
-  let createdText = created && formatDistanceToNow(created, { addSuffix: true });
+const Task = ({ description, created, completed, onCompleteClick, onDeleteClick, onEditClick }) => {
+  let createdText = formatDistanceToNow(created, { addSuffix: true, includeSeconds: true });
   
   return (
     <div className="view">
@@ -11,14 +12,32 @@ const Task = ({ description, created, completed, onCompleteClick, onDeleteClick,
         onClick={onCompleteClick} />
       <label>
         <span className="description">{ description }</span>
-        <span className="created">{ createdText }</span>
+        <span className="created">{ `created ${createdText}` }</span>
       </label>
       <button className="icon icon-edit"
-        onClick={ onEditingClick } ></button>
+        onClick={ onEditClick } ></button>
       <button className="icon icon-destroy"
         onClick={ onDeleteClick } ></button>
     </div>
   );
 };
+
+Task.defaultProps = {
+  description: '',
+  created: new Date(),
+  completed: false,
+  onCompleteClick: () => null,
+  onEditClick: () => null,
+  onDeleteClick: () => null
+};
+
+Task.propTypes = {
+  description: PropTypes.string,
+  created: PropTypes.instanceOf(Date),
+  completed: PropTypes.bool,
+  onCompleteClick: PropTypes.func,
+  onEditClick: PropTypes.func,
+  onDeleteClick: PropTypes.func
+}
 
 export default Task;
