@@ -7,53 +7,54 @@ export default class TaskForm extends Component {
   static defaultProps = {
     defaultValue: '',
     className: '',
-    onSubmit: () => null
-  }
+    onSubmit: () => null,
+  };
 
   static propTypes = {
     defaultValue: PropTypes.string,
     className: PropTypes.oneOf(['new-todo', 'edit']),
-    onSubmit: PropTypes.func
-  }
+    onSubmit: PropTypes.func,
+  };
 
   constructor(props) {
     super(props);
 
-    let { defaultValue } = props;
+    const { defaultValue } = props;
     this.state = {
-      text: defaultValue
+      text: defaultValue,
     };
   }
 
-  handleTextChange = (e) => {
+  handleTextChange = (event) => {
     this.setState({
-      text: e.target.value
-    })
-  }
+      text: event.target.value,
+    });
+  };
 
-  handleFormSubmit = (e) => {
-    e.preventDefault();
+  handleFormSubmit = (event) => {
+    event.preventDefault();
 
-    let { text } = this.state;
-    let { onSubmit } = this.props;
+    const { text } = this.state;
+    const { onSubmit } = this.props;
 
     onSubmit(text);
     this.setState({
-      text: ''
+      text: '',
     });
-  }
+  };
 
   render() {
-    let { text } = this.state;
-    let { className } = this.props;
+    const { text } = this.state;
+    const { className } = this.props;
 
     return (
       <form onSubmit={this.handleFormSubmit}>
-        <input className={ className } 
-          placeholder="What needs to be done?" 
-          autoFocus
+        <input
+          className={className}
+          placeholder="What needs to be done?"
           onChange={this.handleTextChange}
-          value={text} />
+          value={text}
+        />
       </form>
     );
   }
