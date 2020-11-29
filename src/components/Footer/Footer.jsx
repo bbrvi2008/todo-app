@@ -27,7 +27,10 @@ Footer.defaultProps = {
 
 Footer.propTypes = {
   countTasksActive: PropTypes.number,
-  tasksFilterValues: PropTypes.arrayOf(PropTypes.string),
+  tasksFilterValues: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    value: PropTypes.string
+  })),
   filterValue: PropTypes.string,
   onFilterChange: PropTypes.func,
   onClearCompletedClick: PropTypes.func,

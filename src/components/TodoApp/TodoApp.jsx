@@ -71,6 +71,27 @@ export default class TodoApp extends Component {
     });
   };
 
+  handleTimerPause = (id, timer) => {
+    this.setState(({ tasksData }) => {
+      return {
+        tasksData: this.updateItemProperties(tasksData, id, {
+          timer,
+          startTimer: null
+        }),
+      };
+    });
+  }
+
+  handleTimerPlay = (id) => {
+    this.setState(({ tasksData }) => {
+      return {
+        tasksData: this.updateItemProperties(tasksData, id, {
+          startTimer: new Date()
+        }),
+      };
+    });
+  }
+
   handleFilterChange = (value) => {
     this.setState({
       filterValue: value,
@@ -119,6 +140,22 @@ export default class TodoApp extends Component {
     });
   }
 
+  updateItemProperties(arr, id, props) {
+    return arr.map((item) => {
+      const { id: itemId } = item;
+
+      let result = item;
+      if (itemId === id) {
+        result = {
+          ...item,
+          ...props,
+        };
+      }
+
+      return result;
+    });
+  }
+
   relaceItem(arr, newItem) {
     return arr.map((item) => {
       const { id: itemId } = item;
@@ -143,6 +180,9 @@ export default class TodoApp extends Component {
       description: text,
       created: new Date(),
       completed,
+      timer: 0,
+      startTimer: null,
+      editing: false
     };
   }
 
@@ -165,6 +205,8 @@ export default class TodoApp extends Component {
             onCompleteClick={this.handleCompleteClick}
             onEditClick={this.handleEditClick}
             onEditFormSubmit={this.handleEditFormSubmit}
+            onTimerPlay={this.handleTimerPlay}
+            onTimerPause={this.handleTimerPause}
           />
           <Footer
             countTasksActive={countTasksActive}

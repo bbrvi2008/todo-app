@@ -13,6 +13,8 @@ export default class TaskList extends Component {
     onCompleteClick: () => null,
     onEditClick: () => null,
     onEditFormSubmit: () => null,
+    onTimerPlay: () => null,
+    onTimerPause: () => null
   };
 
   static propTypes = {
@@ -29,6 +31,8 @@ export default class TaskList extends Component {
     onCompleteClick: PropTypes.func,
     onEditClick: PropTypes.func,
     onEditFormSubmit: PropTypes.func,
+    onTimerPlay: PropTypes.func,
+    onTimerPause: PropTypes.func
   };
 
   createHandlerEditFormSubmit = (task) => {
@@ -40,10 +44,11 @@ export default class TaskList extends Component {
   };
 
   render() {
-    const { tasks, onDeleteClick, onCompleteClick, onEditClick } = this.props;
+    const { tasks, onDeleteClick, onCompleteClick, onEditClick, onTimerPlay, onTimerPause } = this.props;
 
     const elements = tasks.map((item) => {
-      const { id, editing = false, ...task } = item;
+      const { id, ...task } = item;
+      const { editing } = task;
 
       let classNames = '';
       if (task.completed) {
@@ -65,6 +70,8 @@ export default class TaskList extends Component {
             onDeleteClick={() => onDeleteClick(id)}
             onCompleteClick={() => onCompleteClick(id)}
             onEditClick={() => onEditClick(id)}
+            onTimerPlay={() => onTimerPlay(id)}
+            onTimerPause={(timer) => onTimerPause(id, timer)}
           />
           {editInput}
         </li>

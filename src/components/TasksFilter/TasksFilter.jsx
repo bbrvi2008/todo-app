@@ -29,7 +29,10 @@ TasksFilter.defaultProps = {
 };
 
 TasksFilter.propTypes = {
-  values: PropTypes.arrayOf(PropTypes.string),
+  values: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    value: PropTypes.string
+  })),
   defaultValue: PropTypes.string,
   onChange: PropTypes.func,
 };
