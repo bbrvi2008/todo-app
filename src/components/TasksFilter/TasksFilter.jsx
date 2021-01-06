@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cn from 'classnames';
 
 import './TasksFilter.css';
 
 const TasksFilter = ({ values, defaultValue, onChange }) => {
   const elements = values.map(({ id, value }) => {
-    let classNames = '';
-    if (defaultValue === value) {
-      classNames = 'selected';
-    }
+    const classNames = cn({
+      selected: defaultValue === value
+    });
 
     return (
       <li key={id}>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import Footer from '../Footer';
 import TaskList from '../TaskList';
@@ -6,112 +6,17 @@ import { NewTaskForm } from '../TaskForm';
 
 import './TodoApp.css';
 
-export default class TodoApp extends Component {
-  maxId = 100;
+const TodoApp = () => {
+  const getUniqueId = () =>  {
+    let maxId = 100;
 
-  state = {
-    tasksData: [
-      this.createTask('Completed task', true),
-      this.createTask('Editing task'),
-      this.createTask('Active task'),
-    ],
-    tasksFilterValues: [
-      { id: 1, value: 'All' },
-      { id: 2, value: 'Active' },
-      { id: 3, value: 'Completed' },
-    ],
-    filterValue: 'All',
-  };
-
-  handleNewFormSubmit = (text) => {
-    this.setState(({ tasksData }) => {
-      const newItem = this.createTask(text);
-
-      return {
-        tasksData: this.addItem(tasksData, newItem),
-      };
-    });
-  };
-
-  handleEditFormSubmit = (oldItem, text) => {
-    this.setState(({ tasksData }) => {
-      const newItem = {
-        ...oldItem,
-        description: text,
-        editing: false,
-      };
-
-      return {
-        tasksData: this.relaceItem(tasksData, newItem),
-      };
-    });
-  };
-
-  handleCompleteClick = (id) => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: this.toggleItemProperty(tasksData, id, 'completed'),
-      };
-    });
-  };
-
-  handleEditClick = (id) => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: this.toggleItemProperty(tasksData, id, 'editing'),
-      };
-    });
-  };
-
-  handleDeleteClick = (id) => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: this.deleteItem(tasksData, id),
-      };
-    });
-  };
-
-  handleTimerPause = (id, timer) => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: this.updateItemProperties(tasksData, id, {
-          timer,
-          startTimer: null
-        }),
-      };
-    });
+    return () => {
+      maxId += 1;
+      return maxId;
+    };
   }
 
-  handleTimerPlay = (id) => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: this.updateItemProperties(tasksData, id, {
-          startTimer: new Date()
-        }),
-      };
-    });
-  }
-
-  handleFilterChange = (value) => {
-    this.setState({
-      filterValue: value,
-    });
-  };
-
-  handleClearCompletedClick = () => {
-    this.setState(({ tasksData }) => {
-      return {
-        tasksData: tasksData.filter(({ completed }) => !completed),
-      };
-    });
-  };
-
-  getUniqueId() {
-    this.maxId += 1;
-    return this.maxId;
-  }
-
-  getTasksByFilter(tasksData, filterValue) {
+  const getTasksByFilter = (tasksData, filterValue) => {
     switch (filterValue) {
       case 'All':
         return tasksData;
@@ -124,99 +29,146 @@ export default class TodoApp extends Component {
     }
   }
 
-  toggleItemProperty(arr, id, propName) {
-    return arr.map((item) => {
-      const { id: itemId } = item;
+  const toggleItemProperty = (arr, id, propName) => arr.map((item) => {
+    const { id: itemId } = item;
 
-      let result = item;
-      if (itemId === id) {
-        result = {
-          ...item,
-          [propName]: !item[propName],
-        };
-      }
+    let result = item;
+    if (itemId === id) {
+      result = {
+        ...item,
+        [propName]: !item[propName],
+      };
+    }
 
-      return result;
-    });
-  }
+    return result;
+  })
 
-  updateItemProperties(arr, id, props) {
-    return arr.map((item) => {
-      const { id: itemId } = item;
+  const updateItemProperties = (arr, id, props) => arr.map((item) => {
+    const { id: itemId } = item;
 
-      let result = item;
-      if (itemId === id) {
-        result = {
-          ...item,
-          ...props,
-        };
-      }
+    let result = item;
+    if (itemId === id) {
+      result = {
+        ...item,
+        ...props,
+      };
+    }
 
-      return result;
-    });
-  }
+    return result;
+  })
 
-  relaceItem(arr, newItem) {
-    return arr.map((item) => {
-      const { id: itemId } = item;
+  const relaceItem = (arr, newItem) => arr.map((item) => {
+    const { id: itemId } = item;
 
-      return itemId === newItem.id ? newItem : item;
-    });
-  }
+    return itemId === newItem.id ? newItem : item;
+  })
 
-  addItem(arr, item) {
-    return [...arr, item];
-  }
+  const addItem = (arr, item) => [...arr, item]
 
-  deleteItem(arr, id) {
-    return arr.filter(({ id: itemId }) => {
-      return itemId !== id;
-    });
-  }
+  const deleteItem = (arr, id) => arr.filter(({ id: itemId }) => {
+    return itemId !== id;
+  })
 
-  createTask(text, completed = false) {
-    return {
-      id: this.getUniqueId(),
+  const createTask = (text, completed = false) => ({
+    id: getUniqueId(),
+    description: text,
+    created: new Date(),
+    completed,
+    timer: 0,
+    startTimer: null,
+    editing: false
+  })
+
+  const [ tasksData, setTasksData ] = useState([
+    createTask('Completed task', true),
+    createTask('Editing task'),
+    createTask('Active task'),
+  ]);
+  const [ filterValue, setFilterValue ] = useState('All')
+
+  const handleNewFormSubmit = (text) => {
+    const newItem = createTask(text);
+    
+    setTasksData(tasks => addItem(tasks, newItem));
+  };
+
+  const handleEditFormSubmit = (oldItem, text) => {
+    const newItem = {
+      ...oldItem,
       description: text,
-      created: new Date(),
-      completed,
-      timer: 0,
-      startTimer: null,
-      editing: false
+      editing: false,
     };
+
+    setTasksData(tasks => relaceItem(tasks, newItem));
+  };
+
+  const handleCompleteClick = (id) => {
+    setTasksData(tasks => toggleItemProperty(tasks, id, 'completed'));
+  };
+
+  const handleEditClick = (id) => {
+    setTasksData(tasks => toggleItemProperty(tasks, id, 'editing'));
+  };
+
+  const handleDeleteClick = (id) => {
+    setTasksData(tasks => deleteItem(tasks, id))
+  };
+
+  const handleTimerPause = (id, timer) => {
+    setTasksData(tasks => updateItemProperties(tasks, id, {
+      timer,
+      startTimer: null
+    }));
   }
 
-  render() {
-    const { tasksData, tasksFilterValues, filterValue } = this.state;
+  const handleTimerPlay = (id) => {
+    setTasksData(tasks => updateItemProperties(tasks, id, {
+      startTimer: new Date()
+    }));
+  }
 
-    const filteredTasksData = this.getTasksByFilter(tasksData, filterValue);
-    const countTasksActive = this.getTasksByFilter(tasksData, 'Active').length;
+  const handleFilterChange = (value) => {
+    setFilterValue(value);
+  };
 
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <NewTaskForm onSubmit={this.handleNewFormSubmit} />
-        </header>
-        <section className="main">
-          <TaskList
-            tasks={filteredTasksData}
-            onDeleteClick={this.handleDeleteClick}
-            onCompleteClick={this.handleCompleteClick}
-            onEditClick={this.handleEditClick}
-            onEditFormSubmit={this.handleEditFormSubmit}
-            onTimerPlay={this.handleTimerPlay}
-            onTimerPause={this.handleTimerPause}
-          />
-          <Footer
-            countTasksActive={countTasksActive}
-            tasksFilterValues={tasksFilterValues}
-            filterValue={filterValue}
-            onFilterChange={this.handleFilterChange}
-            onClearCompletedClick={this.handleClearCompletedClick}
-          />
-        </section>
+  const handleClearCompletedClick = () => {
+    setTasksData(tasks => tasks.filter(({ completed }) => !completed));
+  };
+
+  const tasksFilterValues = [
+    { id: 1, value: 'All' },
+    { id: 2, value: 'Active' },
+    { id: 3, value: 'Completed' },
+  ];
+  const filteredTasksData = getTasksByFilter(tasksData, filterValue);
+  const countTasksActive = getTasksByFilter(tasksData, 'Active').length;
+
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <h1>todos</h1>
+        <NewTaskForm onSubmit={handleNewFormSubmit} />
+      </header>
+      <section className="main">
+        <TaskList
+          tasks={filteredTasksData}
+          onDeleteClick={handleDeleteClick}
+          onCompleteClick={handleCompleteClick}
+          onEditClick={handleEditClick}
+          onEditFormSubmit={handleEditFormSubmit}
+          onTimerPlay={handleTimerPlay}
+          onTimerPause={handleTimerPause}
+        />
+        <Footer
+          countTasksActive={countTasksActive}
+          tasksFilterValues={tasksFilterValues}
+          filterValue={filterValue}
+          onFilterChange={handleFilterChange}
+          onClearCompletedClick={handleClearCompletedClick}
+        />
       </section>
-    );
-  }
+    </section>
+  );
 }
+
+export default TodoApp;

@@ -1,61 +1,44 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import './TaskForm.css';
 
-export default class TaskForm extends Component {
-  static defaultProps = {
-    defaultValue: '',
-    className: '',
-    onSubmit: () => null,
+const TaskForm = ({ defaultValue, className, onSubmit }) => {
+  const [ text, setText ] = useState(defaultValue);
+
+  const handleTextChange = (event) => {
+    setText(event.target.value);
   };
 
-  static propTypes = {
-    defaultValue: PropTypes.string,
-    className: PropTypes.oneOf(['new-todo', 'edit']),
-    onSubmit: PropTypes.func,
-  };
-
-  constructor(props) {
-    super(props);
-
-    const { defaultValue } = props;
-    this.state = {
-      text: defaultValue,
-    };
-  }
-
-  handleTextChange = (event) => {
-    this.setState({
-      text: event.target.value,
-    });
-  };
-
-  handleFormSubmit = (event) => {
+  const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    const { text } = this.state;
-    const { onSubmit } = this.props;
-
     onSubmit(text);
-    this.setState({
-      text: '',
-    });
+    setText('');
   };
 
-  render() {
-    const { text } = this.state;
-    const { className } = this.props;
-
-    return (
-      <form onSubmit={this.handleFormSubmit}>
-        <input
-          className={className}
-          placeholder="What needs to be done?"
-          onChange={this.handleTextChange}
-          value={text}
-        />
-      </form>
-    );
-  }
+  return (
+    <form onSubmit={handleFormSubmit}>
+      <input
+        className={className}
+        placeholder="What needs to be done?"
+        onChange={handleTextChange}
+        value={text}
+      />
+    </form>
+  );
 }
+
+TaskForm.defaultProps = {
+  defaultValue: '',
+  className: '',
+  onSubmit: () => null,
+};
+
+TaskForm.propTypes = {
+  defaultValue: PropTypes.string,
+  className: PropTypes.oneOf(['new-todo', 'edit']),
+  onSubmit: PropTypes.func,
+};
+
+export default TaskForm;
